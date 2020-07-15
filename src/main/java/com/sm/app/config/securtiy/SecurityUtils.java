@@ -25,10 +25,6 @@ public class SecurityUtils {
 	public String generateUserId(int length) {
 		return generateRandomString(length);
 	}
-//
-//	public String generateAddressId(int length) {
-//		return generateRandomString(length);
-//	}
 
 	/**
 	 * Generate random unique string with the given length

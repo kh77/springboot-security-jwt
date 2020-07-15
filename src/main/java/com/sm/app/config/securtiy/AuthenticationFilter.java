@@ -1,6 +1,7 @@
 package com.sm.app.config.securtiy;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -75,8 +76,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         UserDto userDto = userService.getUser(userName);
         
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-        res.addHeader("UserID", userDto.getUserId());
-
+        res.addHeader("UserID", userDto.getUserId()); 
+        // authorities in header
+        res.addHeader("Auth",((UserPrincipal) auth.getPrincipal()).getAuthorities().toString());
+        // authorities in body
+        res.getWriter().write(((UserPrincipal) auth.getPrincipal()).getAuthorities().toString());
     }  
 
 }

@@ -45,7 +45,8 @@ public class UserEntity implements Serializable {
 	private Boolean emailVerificationStatus = false;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)
-	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
+	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), 
+				inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
 	private Collection<Role> roles;
 
 	public long getId() {

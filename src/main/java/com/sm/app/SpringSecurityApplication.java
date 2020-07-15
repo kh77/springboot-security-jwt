@@ -14,27 +14,19 @@ public class SpringSecurityApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringSecurityApplication.class, args);
 	}
-
 	
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-//	
-//	@Bean
-//	public AmazonSES getAmazonSES() {
-//		return new AmazonSES();
-//	}
  
 	@Bean 
-	public SpringApplicationContext springApplicationContext()
-	{
+	public SpringApplicationContext springApplicationContext() {
 		return new SpringApplicationContext();
 	}
 	
 	@Bean(name="AppProperties")
-	public AppProperties getAppProperties()
-	{
+	public AppProperties getAppProperties() {
 		return new AppProperties();
 	}
 }

@@ -45,9 +45,6 @@ public class UserServiceImpl implements UserService {
 //	@Autowired 
 //	PasswordResetTokenRepository passwordResetTokenRepository;
 	
-//	@Autowired
-//    AmazonSES amazonSES;
-	
 	@Autowired
 	RoleRepository roleRepository;
  
@@ -82,9 +79,6 @@ public class UserServiceImpl implements UserService {
  
 		//BeanUtils.copyProperties(storedUserDetails, returnValue);
 		UserDto returnValue  = modelMapper.map(storedUserDetails, UserDto.class);
-		
-        // Send an email message to user to verify their email address
-	//	amazonSES.verifyEmail(returnValue);
 
 		return returnValue;
 	}
