@@ -1,7 +1,12 @@
 package com.sm.app.config;
 
-import java.util.Arrays;
-
+import com.sm.app.business.service.RefreshTokenService;
+import com.sm.app.business.service.UserService;
+import com.sm.app.config.securtiy.AuthenticationFilter;
+import com.sm.app.config.securtiy.AuthorizationFilter;
+import com.sm.app.config.securtiy.JwtUtility;
+import com.sm.app.orm.repository.UserRepository;
+import com.sm.app.web.UrlMapping;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,50 +20,50 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.sm.app.business.service.UserService;
-import com.sm.app.config.securtiy.AuthenticationFilter;
-import com.sm.app.config.securtiy.AuthorizationFilter;
-import com.sm.app.config.securtiy.SecurityConstants;
-import com.sm.app.orm.repository.UserRepository;
+import java.util.Arrays;
 
-@EnableGlobalMethodSecurity(securedEnabled=true, prePostEnabled=true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
-public class WebSecurity extends WebSecurityConfigurerAdapter{
+public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-    private final UserService userDetailsService;
+    private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
+    private final JwtUtility jwtUtility;
+    private final RefreshTokenService refreshTokenService;
 
-    public WebSecurity(UserService userDetailsService,
-    		BCryptPasswordEncoder bCryptPasswordEncoder,
-    		UserRepository userRepository
-    		) {
-        this.userDetailsService = userDetailsService;
+    public WebSecurity(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder,
+                       UserRepository userRepository, JwtUtility jwtUtility, RefreshTokenService refreshTokenService) {
+        this.userService = userService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
+        this.jwtUtility = jwtUtility;
+        this.refreshTokenService = refreshTokenService;
     }
-    
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-        .cors().and()
-        .csrf().disable().authorizeRequests()
-        .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
-        .permitAll()
-        .antMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL)
-        .permitAll()
-        .antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_REQUEST_URL)
-        .permitAll()
-        .antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL)
-        .permitAll()
-        //.antMatchers(SecurityConstants.H2_CONSOLE)
-        //.permitAll()
-        .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
-        .permitAll()
-        //.antMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
-        .anyRequest().authenticated().and()
-        .addFilter(getAuthenticationFilter())
-        .addFilter(new AuthorizationFilter(authenticationManager(), userRepository))
+                .cors().and()
+                .csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, UrlMapping.SIGN_UP_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.GET, UrlMapping.VERIFICATION_EMAIL_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.POST, UrlMapping.PASSWORD_RESET_REQUEST_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.POST, UrlMapping.PASSWORD_RESET_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.POST, UrlMapping.SIGN_UP_URL + UrlMapping.REFRESH_TOKEN_URL)
+                .permitAll()
+                //.antMatchers(SecurityConstants.H2_CONSOLE)
+                //.permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
+                .permitAll()
+                //.antMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                .anyRequest().authenticated().and()
+                .addFilter(getAuthenticationFilter())
+                .addFilter(new AuthorizationFilter(authenticationManager(), userRepository, jwtUtility))
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         
@@ -67,14 +72,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
     }
     
     protected AuthenticationFilter getAuthenticationFilter() throws Exception {
-	    final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
-	    filter.setFilterProcessesUrl("/users/login");
-	    return filter;
-	}
+        final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager(), jwtUtility, userService, refreshTokenService);
+        filter.setFilterProcessesUrl("/users/login");
+        return filter;
+    }
     
     @Bean
     public CorsConfigurationSource corsConfigurationSource()

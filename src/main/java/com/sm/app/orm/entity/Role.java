@@ -1,29 +1,18 @@
 package com.sm.app.orm.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 
 @Entity
 @Table(name="roles")
 public class Role implements Serializable {
 
 	private static final long serialVersionUID = 5605260522147928803L;
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 	
 	@Column(nullable=false, length=20)
 	private String name;
@@ -32,22 +21,23 @@ public class Role implements Serializable {
 	private Collection<UserEntity> users;
 	
 	@ManyToMany(cascade= { CascadeType.PERSIST }, fetch = FetchType.EAGER )
-	@JoinTable(name="roles_authorities", 
-			joinColumns=@JoinColumn(name="roles_id",referencedColumnName="id"), 
-			inverseJoinColumns=@JoinColumn(name="authorities_id",referencedColumnName="id"))
+	@JoinTable(name="roles_authorities",
+			joinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "authorities_id", referencedColumnName = "id"))
 	private Collection<Authority> authorities;
- 	
-	public Role() {}
-	
-	public Role(String name) {
-		 this.name = name;
+
+	public Role() {
 	}
 
-	public long getId() {
+	public Role(String name) {
+		this.name = name;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

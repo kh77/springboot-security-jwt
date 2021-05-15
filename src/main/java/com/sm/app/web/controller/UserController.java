@@ -1,24 +1,25 @@
 package com.sm.app.web.controller;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.sm.app.business.service.RefreshTokenService;
 import com.sm.app.business.service.UserService;
+import com.sm.app.config.securtiy.SecurityConstants;
 import com.sm.app.shared.dto.UserDto;
+import com.sm.app.web.UrlMapping;
+import com.sm.app.web.request.LogOutRequest;
+import com.sm.app.web.request.TokenRefreshRequest;
 import com.sm.app.web.request.UserDetailsRequestModel;
 import com.sm.app.web.response.UserRest;
-
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users") // http://localhost:8080/users
@@ -27,12 +28,14 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+	@Autowired
+	RefreshTokenService refreshTokenService;
 
 	@ApiOperation(value = "The Get User Details Web Service Endpoint", notes = "${userController.GetUser.ApiOperation.Notes}")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
-	@GetMapping(path = "/{id}",produces = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header")})
+	@GetMapping(path = "/{id}", produces = {
+			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public UserRest getUser(@PathVariable String id) {
 		UserRest returnValue = new UserRest();
 
@@ -72,6 +75,20 @@ public class UserController {
 		returnValue = new ModelMapper().map(updateUser, UserRest.class);
 
 		return returnValue;
+	}
+
+	@PostMapping(UrlMapping.REFRESH_TOKEN_URL)
+	public ResponseEntity<String> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set(SecurityConstants.AUTHORIZATION_HEADER, SecurityConstants.TOKEN_PREFIX +
+				refreshTokenService.validateAndGenerateRefreshToken(request));
+		return ResponseEntity.ok().headers(responseHeaders).body("success");
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<String> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+		refreshTokenService.deleteByUserId(logOutRequest.getUserId());
+		return ResponseEntity.ok("Log out successful");
 	}
 	//
 	// @DeleteMapping(path = "/{id}", produces = {

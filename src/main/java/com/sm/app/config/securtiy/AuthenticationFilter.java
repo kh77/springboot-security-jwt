@@ -1,37 +1,39 @@
 package com.sm.app.config.securtiy;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sm.app.business.service.RefreshTokenService;
+import com.sm.app.business.service.UserService;
+import com.sm.app.orm.entity.RefreshToken;
+import com.sm.app.shared.dto.UserDto;
+import com.sm.app.web.UrlMapping;
+import com.sm.app.web.request.UserLoginRequestModel;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sm.app.business.service.UserService;
-import com.sm.app.config.SpringApplicationContext;
-import com.sm.app.shared.dto.UserDto;
-import com.sm.app.web.request.UserLoginRequestModel;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final JwtUtility jwtUtility;
+    private final UserService userService;
+    private RefreshTokenService refreshTokenService;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager, JwtUtility jwtUtility, UserService userService,
+                                RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
+        this.jwtUtility = jwtUtility;
+        this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
     }
-    
+
     /**
      * when user try to login it will call
      */
@@ -64,21 +66,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-        
-        String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();  
-        
-        String token = Jwts.builder()
-                .setSubject(userName)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret() )
-                .compact();
-        UserService userService = (UserService)SpringApplicationContext.getBean("userServiceImpl");
+
+        String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
+
+        String token = jwtUtility.generateTokenByUserName(userName);
+        //   UserService userService = (UserService)SpringApplicationContext.getBean("userServiceImpl");
         UserDto userDto = userService.getUser(userName);
-        
-        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-        res.addHeader("UserID", userDto.getUserId()); 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDto.getId());
+
+        res.addHeader(SecurityConstants.AUTHORIZATION_HEADER, SecurityConstants.TOKEN_PREFIX + token);
+        res.addHeader("UserID", userDto.getUserId());
+        res.addHeader(UrlMapping.REFRESH_TOKEN_HEADER, refreshToken.getToken());
         // authorities in header
-        res.addHeader("Auth",((UserPrincipal) auth.getPrincipal()).getAuthorities().toString());
+        res.addHeader("Auth", ((UserPrincipal) auth.getPrincipal()).getAuthorities().toString());
         // authorities in body
         res.getWriter().write(((UserPrincipal) auth.getPrincipal()).getAuthorities().toString());
     }  

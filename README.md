@@ -39,20 +39,32 @@ Http METHOD : GET
 body : 
 
 {
-	"email":"abc@hotmail.com",
-	"password":"12345678"
+"email":"abc@hotmail.com",
+"password":"12345678"
 }
 
-You will find Bearer token in header, 
-
+Check Response Header:
+- Bearer token - refresh-token
 
 ---------------------------------------------------
-2) localhost:8080/app-ws/users/putyouruserid
 
-replace your user id (putyouruserid) in the url 
+2) localhost:8080/app-ws/users/put-your-userid
+
+replace your user id (putyouruserid) in the url
 
 Put Authorization header with Bearer token in header value like
 
 Authorization Bearer adfasdhfsadifnsidoafwbeoui321u4u08fsf2h3iu4902309hn
 
 Call the webservice
+
+---------------------------------------------------
+
+3) localhost:8080/app-ws/users/refresh-token Note : you will get the refresh token from then login api, check the header
+   response body {
+   "refreshToken":"464563c0-628a-4517-bb5f-9c2c50cabfaa"
+   }
+
+Call the webservice
+
+
