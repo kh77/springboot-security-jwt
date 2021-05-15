@@ -31,12 +31,19 @@
  	
 	- users_id 
 	- roles_id
+	
+- refresh_token ---> this table contains refresh token is associated with user_id
 
-- Postman URL
+# Postman Collection and URL
 
+
+- you can find postman collection in resources folder
+---------------------------------------------------------------------------------------------
+
+###Login API
 Http METHOD : GET
 
-1)localhost:8080/app-ws/users/login
+- localhost:8080/app-ws/users/login
 
 body : 
 
@@ -46,11 +53,14 @@ body :
 }
 
 Check Response Header:
-- Bearer token - refresh-token
+- Bearer token 
+
+- refresh-token
 
 ---------------------------------------------------
-
-2) localhost:8080/app-ws/users/put-your-userid
+###Get User Info by userId
+Http METHOD : GET
+- localhost:8080/app-ws/users/put-your-userid
 
 replace your user id (put-your-userid) in the url
 
@@ -61,8 +71,9 @@ Authorization Bearer adfasdhfsadifnsidoafwbeoui321u4u08fsf2h3iu4902309hn
 Call the webservice
 
 ---------------------------------------------------
-
-3) localhost:8080/app-ws/users/refresh-token 
+### Generate JWT token after passing refresh token in the body
+Http METHOD : POST
+- localhost:8080/app-ws/users/refresh-token 
    
 Note : you will get the refresh token from then login api, check the header
 
@@ -74,7 +85,3 @@ Note : you will get the refresh token from then login api, check the header
 }
 
 Call the webservice
-
-
----------------------------------------------------------------------------------------------
-you can find postman collection in resources folder 
