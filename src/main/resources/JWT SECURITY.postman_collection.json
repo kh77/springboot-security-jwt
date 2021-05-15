@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "8be4f0e4-55d9-43ce-8ff3-b0bfc54d95a4",
+		"name": "JWT SECURITY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "sign in user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"email\":\"abc@hotmail.com\", \"password\":\"12345678\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/app-ws/users/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app-ws",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user info by token",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAaG90bWFpbC5jb20iLCJleHAiOjE2MjEwNTY3NjZ9.mCNBtgMR-Bl3jV1UuKfe3imhhYYAt3IiApH5rsuXVahJIY75Y6as7_4CmV2iRniVKIVRu6xXXbCW1oGszAieSA",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/app-ws/users/xCfdIlvXpZNT5HV4Um9l6W9sITuUUx",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app-ws",
+						"users",
+						"xCfdIlvXpZNT5HV4Um9l6W9sITuUUx"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\":\"464563c0-628a-4517-bb5f-9c2c50cabfaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/app-ws/users/refresh-token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app-ws",
+						"users",
+						"refresh-token"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -76,3 +76,5 @@ Note : you will get the refresh token from then login api, check the header
 Call the webservice
 
 
+---------------------------------------------------------------------------------------------
+you can find postman collection in resources folder 
