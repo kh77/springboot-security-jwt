@@ -47,7 +47,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAaG90bWFpbC5jb20iLCJleHAiOjE2MjEwNTY3NjZ9.mCNBtgMR-Bl3jV1UuKfe3imhhYYAt3IiApH5rsuXVahJIY75Y6as7_4CmV2iRniVKIVRu6xXXbCW1oGszAieSA",
+						"value": "Bearer ..",
 						"type": "text"
 					},
 					{
@@ -66,7 +66,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "localhost:8080/app-ws/users/xCfdIlvXpZNT5HV4Um9l6W9sITuUUx",
+					"raw": "localhost:8080/app-ws/users/hello",
 					"host": [
 						"localhost"
 					],
@@ -74,7 +74,7 @@
 					"path": [
 						"app-ws",
 						"users",
-						"xCfdIlvXpZNT5HV4Um9l6W9sITuUUx"
+						"hello"
 					]
 				}
 			},
@@ -87,7 +87,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"refreshToken\":\"464563c0-628a-4517-bb5f-9c2c50cabfaa\"\r\n}",
+					"raw": "{\r\n    \"refreshToken\":\"aaaaaa\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
