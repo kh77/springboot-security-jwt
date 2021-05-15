@@ -1,5 +1,7 @@
 
 # Spring Security JWT project
+	- JWT
+	- Refresh token  
 
 
 #### Main package
@@ -50,7 +52,7 @@ Check Response Header:
 
 2) localhost:8080/app-ws/users/put-your-userid
 
-replace your user id (putyouruserid) in the url
+replace your user id (put-your-userid) in the url
 
 Put Authorization header with Bearer token in header value like
 
@@ -60,10 +62,16 @@ Call the webservice
 
 ---------------------------------------------------
 
-3) localhost:8080/app-ws/users/refresh-token Note : you will get the refresh token from then login api, check the header
-   response body {
+3) localhost:8080/app-ws/users/refresh-token 
+   
+Note : you will get the refresh token from then login api, check the header
+
+
+   response body 
+   
+{
    "refreshToken":"464563c0-628a-4517-bb5f-9c2c50cabfaa"
-   }
+}
 
 Call the webservice
 
