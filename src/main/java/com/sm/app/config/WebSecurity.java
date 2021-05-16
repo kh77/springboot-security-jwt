@@ -7,8 +7,11 @@ import com.sm.app.config.securtiy.AuthorizationFilter;
 import com.sm.app.config.securtiy.JwtUtility;
 import com.sm.app.orm.repository.UserRepository;
 import com.sm.app.web.UrlMapping;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -95,5 +98,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     	source.registerCorsConfiguration("/**", configuration);
     	
     	return source;
+    }
+
+    /**
+     * success and failure events implemented
+     */
+    @Bean
+    public AuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher){
+       return new DefaultAuthenticationEventPublisher(applicationEventPublisher);
     }
 }
