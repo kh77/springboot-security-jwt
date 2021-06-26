@@ -37,6 +37,7 @@
 # Postman Collection and URL
 
 
+- swagger-ui: http://localhost:8080/app-ws/swagger-ui.html
 - you can find postman collection in resources folder
 ---------------------------------------------------------------------------------------------
 
